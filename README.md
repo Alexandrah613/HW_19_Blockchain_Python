@@ -39,7 +39,48 @@ The following code derives the wallet keys for ETH And BTCTEST
     BTCTEST: derive_wallets(coin = BTCTEST),
 }
 print(coins)`
-  `
+  
   
   
 <img width="960" alt="2021-07-20" src="https://user-images.githubusercontent.com/78872373/126400756-15aeaaab-ce5e-40f0-a43a-ad2ca247aa84.png">
+
+## Preparing Transactions 
+
+`def create_tx(coin, account, recipient, amount):
+    if coin == ETH: 
+        gasEstimate = w3.eth.estimateGas(
+            {"from":eth_acc.address, "to":recipient, "value": amount}
+        )
+        return { 
+            "from": eth_acc.address,
+            "to": recipient,
+            "value": amount,
+            "gasPrice": w3.eth.gasPrice,
+            "gas": gasEstimate,
+            "nonce": w3.eth.getTransactionCount(eth_acc.address)
+        }
+    
+    elif coin == BTCTEST:
+        return PrivateKeyTestnet.prepare_transaction(account.address, [(recipient, amount, BTC)])`
+
+## Deploying Transactions
+
+`def send_tx(coin, account, recipient, amount):
+    if coin == ETH: 
+        trx_eth = create_tx(coin,account, recipient, amount)
+        sign = account.signTransaction(trx_eth)
+        result = w3.eth.sendRawTransaction(sign.rawTransaction)
+        print(result.hex())
+        return result.hex()
+    elif coin == BTCTEST:
+        trx_btctest= create_tx(coin,account,recipient,amount)
+        sign_trx_btctest = account.sign_transaction(trx_btctest)
+        from bit.network import NetworkAPI
+        NetworkAPI.broadcast_tx_testnet(sign_trx_btctest)       
+        return sign_trx_btctest`
+        
+  ### Executing Transaction
+  
+  
+<img width="960" alt="2021-07-19 (6)" src="https://user-images.githubusercontent.com/78872373/126401296-9ede7a68-aaef-488a-96e2-cdda4a1b7bb4.png">
+
