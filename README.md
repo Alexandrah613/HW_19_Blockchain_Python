@@ -25,7 +25,7 @@
 
 ## Deriving Wallet Keys 
 
-The following code derives the wallet keys for >ETH And >BTCTEST
+The following code derives the wallet keys for ETH And BTCTEST
 
 `def derive_wallets(coin=BTC, mnemonic=mnemonic, depth=3):
     command = f'php ./derive -g --mnemonic="{mnemonic}" --cols=all --coin={coin} --numderive={depth} --format=json'
